@@ -180,26 +180,14 @@ export default function AfternoonSummary() {
       <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
         <h1 className="text-3xl font-bold text-center text-black mb-8">Afternoon Report Summary</h1>
 
-        {/* Submit to Google Sheets */}
+        {/* Download PDF */}
         <div className="mb-8 text-center">
-          <button
-            onClick={handleSubmitToSheets}
-            disabled={isSubmitting}
-            className="bg-green-500 hover:bg-green-600 disabled:bg-gray-400 text-white font-semibold py-2 px-6 rounded-lg transition duration-200 mr-4"
-          >
-            {isSubmitting ? 'Submitting...' : 'Submit to Google Sheets'}
-          </button>
           <button
             onClick={generatePDF}
             className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg transition duration-200"
           >
             Download PDF
           </button>
-          {submitStatus && (
-            <p className={`mt-4 ${submitStatus.includes('successfully') ? 'text-green-600' : 'text-red-600'}`}>
-              {submitStatus}
-            </p>
-          )}
         </div>
 
         <div className="flex justify-center">

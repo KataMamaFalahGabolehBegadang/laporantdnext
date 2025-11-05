@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { submitAfternoonReport } from '@/lib/googleSheets';
+import { submitAfternoonReport } from '@/lib/supabase';
 
 export async function POST(request: NextRequest) {
   try {

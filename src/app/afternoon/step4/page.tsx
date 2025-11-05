@@ -13,6 +13,7 @@ interface Kendala {
 export default function AfternoonFormStep4() {
   const [kendalas, setKendalas] = useState<Kendala[]>([]);
   const [uploading, setUploading] = useState<{ [key: string]: boolean }>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const savedData = localStorage.getItem('afternoonFormData');
@@ -85,8 +86,9 @@ export default function AfternoonFormStep4() {
     setKendalas(prev => prev.filter(kendala => kendala.id !== id));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
     const savedData = localStorage.getItem('afternoonFormData');
     if (savedData) {
       const data = JSON.parse(savedData);
@@ -95,7 +97,28 @@ export default function AfternoonFormStep4() {
         kendalas,
       };
       localStorage.setItem('afternoonFormData', JSON.stringify(updatedData));
+
+      // Automatically submit to Google Sheets
+      try {
+        const response = await fetch('/api/submit-afternoon', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatedData),
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          console.log('Report submitted successfully to Google Sheets!');
+        } else {
+          console.error('Failed to submit report to Google Sheets');
+        }
+      } catch (error) {
+        console.error('Error submitting report to Google Sheets:', error);
+      }
     }
+    setIsSubmitting(false);
     window.location.href = '/afternoon/summary';
   };
 
@@ -189,9 +212,20 @@ export default function AfternoonFormStep4() {
             </Link>
             <button
               type="submit"
-              className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
+              disabled={isSubmitting}
+              className="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white font-semibold py-2 px-4 rounded-lg transition duration-200 flex items-center"
             >
-              Submit Report
+              {isSubmitting ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Submitting...
+                </>
+              ) : (
+                'Submit Report'
+              )}
             </button>
           </div>
         </form>

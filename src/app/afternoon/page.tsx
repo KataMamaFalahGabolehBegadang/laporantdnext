@@ -3,16 +3,46 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
-const pduOptions = ['PDU 1', 'PDU 2', 'PDU 3'];
-const tdOptions = ['TD 1', 'TD 2', 'TD 3'];
-const transmisiOptions = ['Transmisi A', 'Transmisi B', 'Transmisi C', 'Transmisi D'];
+interface Staff {
+  id: number;
+  nama: string;
+  jenis: string;
+}
 
 export default function AfternoonFormStep1() {
   const [pduStaff, setPduStaff] = useState('');
   const [tdStaff, setTdStaff] = useState('');
   const [transmisiStaff, setTransmisiStaff] = useState<string[]>([]);
+  const [pduOptions, setPduOptions] = useState<Staff[]>([]);
+  const [tdOptions, setTdOptions] = useState<Staff[]>([]);
+  const [transmisiOptions, setTransmisiOptions] = useState<Staff[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const fetchStaff = async () => {
+      try {
+        const [pduRes, tdRes, transmisiRes] = await Promise.all([
+          fetch('/api/staff?role=PDU'),
+          fetch('/api/staff?role=TD'),
+          fetch('/api/staff?role=TRANSMISI')
+        ]);
+
+        const pduData = await pduRes.json();
+        const tdData = await tdRes.json();
+        const transmisiData = await transmisiRes.json();
+
+        setPduOptions(pduData.staff || []);
+        setTdOptions(tdData.staff || []);
+        setTransmisiOptions(transmisiData.staff || []);
+      } catch (error) {
+        console.error('Error fetching staff:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStaff();
+
     const savedData = localStorage.getItem('afternoonFormData');
     if (savedData) {
       const data = JSON.parse(savedData);
@@ -61,7 +91,7 @@ export default function AfternoonFormStep1() {
               >
                 <option value="">Select PDU Staff</option>
                 {pduOptions.map(option => (
-                  <option key={option} value={option}>{option}</option>
+                  <option key={option.id} value={option.nama}>{option.nama}</option>
                 ))}
               </select>
             </div>
@@ -74,7 +104,7 @@ export default function AfternoonFormStep1() {
               >
                 <option value="">Select TD Staff</option>
                 {tdOptions.map(option => (
-                  <option key={option} value={option}>{option}</option>
+                  <option key={option.id} value={option.nama}>{option.nama}</option>
                 ))}
               </select>
             </div>
@@ -85,13 +115,13 @@ export default function AfternoonFormStep1() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {transmisiOptions.map(option => (
                 <div
-                  key={option}
-                  onClick={() => toggleTransmisi(option)}
+                  key={option.id}
+                  onClick={() => toggleTransmisi(option.nama)}
                   className={`p-4 border rounded-lg cursor-pointer transition ${
-                    transmisiStaff.includes(option) ? 'bg-blue-100 border-blue-500' : 'bg-gray-50 border-gray-300'
+                    transmisiStaff.includes(option.nama) ? 'bg-blue-100 border-blue-500' : 'bg-gray-50 border-gray-300'
                   }`}
                 >
-                  <div className="text-center font-medium text-black">{option}</div>
+                  <div className="text-center font-medium text-black">{option.nama}</div>
                 </div>
               ))}
             </div>
