@@ -19,7 +19,7 @@ interface CustomEvent extends Event {
 
 const acaraData: TimeSlot[] = [
   {
-    time: '15.00 - 15.30',
+    time: '15.00 - 16.00',
     events: [
       { name: 'Banua Bicara', type: 'Live' },
       { name: 'Hidup Sehat', type: 'Live' },
@@ -30,24 +30,11 @@ const acaraData: TimeSlot[] = [
       { name: 'Hari Yang Berkah', type: 'Playback' },
       { name: 'Inspirasi Indonesia - Nusantara', type: 'Playback' },
       { name: 'Ngopi', type: 'Rerun' },
-    ],
-  },
-  {
-    time: '15.30 - 16.00',
-    events: [
-      { name: 'Banua Bicara', type: 'Live' },
-      { name: 'Hidup Sehat', type: 'Live' },
-      { name: 'Hidup Sehat', type: 'Playback' },
-      { name: 'Ngopi', type: 'Live' },
-      { name: 'Cahaya Qalbu', type: 'Live' },
-      { name: 'Cahaya Qalbu', type: 'Playback' },
-      { name: 'Hari Yang Berkah', type: 'Playback' },
       { name: 'Warung Bubuhan', type: 'Playback' },
-      { name: 'Ngopi', type: 'Rerun' },
     ],
   },
   {
-    time: '16.00 - 16.30',
+    time: '16.00 - 17.00',
     events: [
       { name: 'Music On Studio', type: 'Playback' },
       { name: 'Sekolah Ku Keren', type: 'Rerun' },
@@ -61,51 +48,25 @@ const acaraData: TimeSlot[] = [
       { name: 'Siroh Buddha', type: 'Rerun' },
       { name: 'Siroh Kongwuchu', type: 'Rerun' },
       { name: 'Dangdut Keliling', type: 'Playback' },
-    ],
-  },
-  {
-    time: '16.30 - 17.00',
-    events: [
-      { name: 'Music On Studio', type: 'Playback' },
       { name: 'Bakunjang', type: 'Rerun' },
-      { name: 'Banua Bicara OTR', type: 'Playback' },
       { name: 'Lensa Olahraga', type: 'Rerun' },
-      { name: 'Hidup Sehat', type: 'Rerun' },
-      { name: 'Siroh Protestan', type: 'Rerun' },
-      { name: 'Siroh Hindu', type: 'Rerun' },
-      { name: 'Siroh Katolik', type: 'Rerun' },
-      { name: 'Siroh Buddha', type: 'Rerun' },
-      { name: 'Siroh Kongwuchu', type: 'Rerun' },
-      { name: 'Dangdut Keliling', type: 'Playback' },
     ],
   },
   {
-    time: '17.00 - 17.30',
+    time: '17.00 - 18.00',
     events: [
       { name: 'Kalsel Hari Ini', type: 'Live' },
       { name: 'Habar Banua', type: 'Playback' },
     ],
   },
   {
-    time: '17.30 - 18.00',
-    events: [
-      { name: 'Kalsel Hari Ini', type: 'Live' },
-      { name: 'Habar Banua', type: 'Playback' },
-    ],
-  },
-  {
-    time: '18.00 - 18.30',
+    time: '18.00 - 19.00',
     events: [
       { name: 'Kajian Tauhid', type: 'Playback' },
       { name: 'Fiqih Wanita', type: 'Playback' },
       { name: 'Mutiara Hadis', type: 'Playback' },
       { name: 'Azan Maghrib', type: 'Playback' },
       { name: 'PKS ANTARA', type: 'Playback' },
-    ],
-  },
-  {
-    time: '18.30 - 19.00',
-    events: [
       { name: 'Pesona Indonesia - Nusantara', type: 'Playback' },
       { name: 'Inspirasi Indonesia', type: 'Playback' },
       { name: 'Jejak Islam', type: 'Playback' },

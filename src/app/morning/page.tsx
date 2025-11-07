@@ -13,10 +13,22 @@ export default function MorningFormStep1() {
   const [pduStaff, setPduStaff] = useState('');
   const [tdStaff, setTdStaff] = useState('');
   const [transmisiStaff, setTransmisiStaff] = useState<string[]>([]);
+  const [customDate, setCustomDate] = useState('');
   const [pduOptions, setPduOptions] = useState<Staff[]>([]);
   const [tdOptions, setTdOptions] = useState<Staff[]>([]);
   const [transmisiOptions, setTransmisiOptions] = useState<Staff[]>([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const savedData = localStorage.getItem('morningFormData');
+    if (savedData) {
+      const data = JSON.parse(savedData);
+      setPduStaff(data.pduStaff || '');
+      setTdStaff(data.tdStaff || '');
+      setTransmisiStaff(data.transmisiStaff || []);
+      setCustomDate(data.customDate || '');
+    }
+  }, []);
 
   useEffect(() => {
     const fetchStaff = async () => {
@@ -42,15 +54,14 @@ export default function MorningFormStep1() {
     };
 
     fetchStaff();
-
-    const savedData = localStorage.getItem('morningFormData');
-    if (savedData) {
-      const data = JSON.parse(savedData);
-      setPduStaff(data.pduStaff || '');
-      setTdStaff(data.tdStaff || '');
-      setTransmisiStaff(data.transmisiStaff || []);
-    }
   }, []);
+
+  useEffect(() => {
+    if (transmisiOptions.length > 0) {
+      const currentTransmisiNames = transmisiOptions.map(option => option.nama);
+      setTransmisiStaff(prev => prev.filter(name => name && currentTransmisiNames.includes(name)));
+    }
+  }, [transmisiOptions]);
 
   const toggleTransmisi = (staff: string) => {
     setTransmisiStaff(prev =>
@@ -66,6 +77,7 @@ export default function MorningFormStep1() {
       pduStaff,
       tdStaff,
       transmisiStaff,
+      customDate,
       buktiStudio: null,
       buktiStreaming: null,
       buktiSubcontrol: null,
@@ -125,6 +137,18 @@ export default function MorningFormStep1() {
                 </div>
               ))}
             </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-black mb-2">CUSTOM DATE *</label>
+            <input
+              type="date"
+              value={customDate}
+              onChange={(e) => setCustomDate(e.target.value)}
+              required
+              className="w-full p-2 border border-gray-300 rounded-md text-black"
+            />
+            <p className="text-xs text-gray-500 mt-1">Required field</p>
           </div>
 
           <div className="flex justify-end">

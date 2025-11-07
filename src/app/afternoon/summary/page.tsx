@@ -14,6 +14,7 @@ interface FormData {
   buktiSubcontrol: string;
   selectedEvents: { time: string; name: string; type: string }[];
   kendalas: { id: string; nama: string; waktu: string; buktiKendala: string }[];
+  customDate: string;
 }
 
 export default function AfternoonSummary() {
@@ -61,15 +62,43 @@ export default function AfternoonSummary() {
     if (!formData) return;
 
     const pdf = new jsPDF('l', 'mm', 'a4'); // Landscape orientation for more width
+    const pageWidth = pdf.internal.pageSize.getWidth();
+
+    // Add logo at top right
+    try {
+      const logoResponse = await fetch('/logo-tvri.png');
+      const logoBlob = await logoResponse.blob();
+      const logoBase64 = await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.readAsDataURL(logoBlob);
+      });
+      pdf.addImage(logoBase64, 'PNG', pageWidth - 30, 10, 18, 15);
+    } catch (error) {
+      console.error('Error loading logo:', error);
+    }
+
     let yPosition = 20;
 
     // Title
+    pdf.setFont('helvetica', 'bold');
     pdf.setFontSize(20);
     pdf.setTextColor(0, 0, 0);
-    pdf.text('Afternoon Report Summary', 20, yPosition);
+    const title = 'Laporan TD Sore';
+    const titleWidth = pdf.getTextWidth(title);
+    const xPosition = (pageWidth - titleWidth) / 2;
+    pdf.text(title, xPosition, yPosition);
     yPosition += 20;
 
+    // Tanggal
+    pdf.setFontSize(12);
+    pdf.setTextColor(0, 0, 0);
+    const tanggal = formData.customDate || new Date().toISOString().split('T')[0];
+    pdf.text(`Tanggal: ${tanggal}`, 20, yPosition);
+    yPosition += 15;
+
     // Staff Selection Table
+    pdf.setFont('helvetica', 'bold');
     pdf.setFontSize(16);
     pdf.setTextColor(0, 0, 255); // Blue
     pdf.text('Staff Selection', 20, yPosition);
@@ -91,6 +120,7 @@ export default function AfternoonSummary() {
     yPosition = (pdf as any).lastAutoTable.finalY + 20;
 
     // Evidence Upload Table
+    pdf.setFont('helvetica', 'bold');
     pdf.setFontSize(16);
     pdf.setTextColor(0, 128, 0); // Green
     pdf.text('Evidence Upload', 20, yPosition);
@@ -115,6 +145,11 @@ export default function AfternoonSummary() {
     yPosition = (pdf as any).lastAutoTable.finalY + 20;
 
     // ACARA Selection Table
+    if (yPosition > 150) {
+      pdf.addPage();
+      yPosition = 20;
+    }
+    pdf.setFont('helvetica', 'bold');
     pdf.setFontSize(16);
     pdf.setTextColor(255, 0, 0); // Red
     pdf.text('ACARA Selection', 20, yPosition);
@@ -136,6 +171,7 @@ export default function AfternoonSummary() {
     yPosition = (pdf as any).lastAutoTable.finalY + 20;
 
     // KENDALA Table
+    pdf.setFont('helvetica', 'bold');
     pdf.setFontSize(16);
     pdf.setTextColor(255, 165, 0); // Orange
     pdf.text('KENDALA', 20, yPosition);

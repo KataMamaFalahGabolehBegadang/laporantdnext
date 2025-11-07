@@ -45,20 +45,13 @@ const acaraData: TimeSlot[] = [
     ],
   },
   {
-    time: '11.00 - 11.30',
+    time: '11.00 - 12.00',
     events: [
       { name: 'Ini Borneo', type: 'Relay' },
       { name: 'Ini Borneo', type: 'Live' },
       { name: 'Inspirasi Indonesia', type: 'Playback' },
       { name: 'Lintas Borneo', type: 'Playback' },
       { name: 'Pesona Indonesia Kalsel', type: 'Playback' },
-    ],
-  },
-  {
-    time: '11.30 - 12.00',
-    events: [
-      { name: 'Ini Borneo', type: 'Relay' },
-      { name: 'Ini Borneo', type: 'Live' },
       { name: 'Kindai Limpuar', type: 'Rerun' },
       { name: 'Lensa Olahraga', type: 'Rerun' },
     ],

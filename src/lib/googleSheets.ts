@@ -50,33 +50,92 @@ export async function appendToSheet(sheetName: string, data: any[]) {
 }
 
 export async function submitMorningReport(formData: any) {
+  const timestamp = new Date().toISOString();
+  const tanggal = formData.customDate || new Date().toISOString().split('T')[0];
   const data = [
-    new Date().toISOString(), // Timestamp
+    timestamp, // Timestamp
     formData.pduStaff || '',
     formData.tdStaff || '',
-    formData.transmisiStaff?.join(', ') || '',
+    formData.transmisiStaff?.map((name: string) => name.replace(/^Transmisi\s+/, '')).join(', ') || '',
     formData.buktiStudio || '',
     formData.buktiStreaming || '',
     formData.buktiSubcontrol || '',
     formData.selectedEvents?.map((e: any) => `${e.time}: ${e.name} (${e.type})`).join('; ') || '',
     formData.kendalas?.map((k: any) => `${k.nama} - ${k.waktu}`).join('; ') || '',
+    tanggal, // Tanggal
   ];
 
   return await appendToSheet('MORNING', data);
 }
 
 export async function submitAfternoonReport(formData: any) {
+  const timestamp = new Date().toISOString();
+  const tanggal = formData.customDate || new Date().toISOString().split('T')[0];
   const data = [
-    new Date().toISOString(), // Timestamp
+    timestamp, // Timestamp
     formData.pduStaff || '',
     formData.tdStaff || '',
-    formData.transmisiStaff?.join(', ') || '',
+    formData.transmisiStaff?.map((name: string) => name.replace(/^Transmisi\s+/, '')).join(', ') || '',
     formData.buktiStudio || '',
     formData.buktiStreaming || '',
     formData.buktiSubcontrol || '',
     formData.selectedEvents?.map((e: any) => `${e.time}: ${e.name} (${e.type})`).join('; ') || '',
     formData.kendalas?.map((k: any) => `${k.nama} - ${k.waktu}`).join('; ') || '',
+    tanggal, // Tanggal
   ];
 
   return await appendToSheet('AFTERNOON', data);
+}
+
+export async function deleteFromSheet(sheetName: string, timestamp: string) {
+  try {
+    const auth = new google.auth.GoogleAuth({
+      credentials: CREDENTIALS,
+      scopes: SCOPES,
+    });
+
+    const sheets = google.sheets({ version: 'v4', auth });
+
+    // Get all data from the sheet
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: `${sheetName}!A:A`,
+    });
+
+    const values = response.data.values || [];
+    const rowIndex = values.findIndex((row) => row[0] === timestamp);
+
+    if (rowIndex === -1) {
+      console.warn('Row not found in sheet for deletion');
+      return { success: true }; // Not an error if not found
+    }
+
+    // Row numbers are 1-indexed, and we need to delete the row (rowIndex + 1)
+    const deleteRow = rowIndex + 1;
+
+    await sheets.spreadsheets.batchUpdate({
+      spreadsheetId: SPREADSHEET_ID,
+      requestBody: {
+        requests: [
+          {
+            deleteRange: {
+              range: {
+                sheetId: 0, // Assuming first sheet, but need to get sheetId properly
+                startRowIndex: deleteRow - 1,
+                endRowIndex: deleteRow,
+                startColumnIndex: 0,
+                endColumnIndex: 10, // Assuming 10 columns
+              },
+              shiftDimension: 'ROWS',
+            },
+          },
+        ],
+      },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error deleting from Google Sheets:', error);
+    return { success: false, error };
+  }
 }

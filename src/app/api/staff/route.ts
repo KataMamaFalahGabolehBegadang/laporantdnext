@@ -13,7 +13,8 @@ export async function GET(request: NextRequest) {
     const { data, error } = await supabase
       .from('petugas2')
       .select('id, nama, jenis')
-      .eq('jenis', role.toUpperCase());
+      .eq('jenis', role.toUpperCase())
+      .order('nama', { ascending: true });
 
     if (error) {
       console.error('Error fetching staff:', error);
