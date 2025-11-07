@@ -74,6 +74,13 @@ export default function AfternoonFormStep2() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Check if all required uploads are completed
+    if (!uploadedUrls.buktiStudio || !uploadedUrls.buktiStreaming || !uploadedUrls.buktiSubcontrol) {
+      alert('Please upload all required evidence files before proceeding.');
+      return;
+    }
+
     // Files are already uploaded and URLs stored in localStorage
     window.location.href = '/afternoon/step3';
   };

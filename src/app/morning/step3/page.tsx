@@ -110,6 +110,13 @@ export default function MorningFormStep3() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Check if at least one event is selected
+    if (selectedEvents.length === 0) {
+      alert('Please select at least one ACARA event before proceeding.');
+      return;
+    }
+
     const savedData = localStorage.getItem('morningFormData');
     if (savedData) {
       const data = JSON.parse(savedData);
